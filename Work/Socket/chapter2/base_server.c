@@ -4,7 +4,7 @@
 #include <string.h>
 #include <arpa/inet.h>
 
-int main(int argc, char** argv[])
+int main(int argc, char** argv)
 {
 	int server_fd, client_fd;
 	struct sockaddr_in server_addr, client_addr;
@@ -15,10 +15,14 @@ int main(int argc, char** argv[])
 		perror("socket failed");
 		exit(1);
 	}
+	
 	memset(&server_addr, 0, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_addr.s_addr = INADDR_ANY;
 	server_addr.sin_port = htons(atoi(argv[1]));
+
+	int enable = 1;
+	setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable));
 
 	if (bind(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
 		perror("bind failed");
